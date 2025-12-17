@@ -1,0 +1,60 @@
+{
+  "name": "windctrl",
+  "version": "0.0.1",
+  "description": "Next-generation styling library for Tailwind CSS",
+  "license": "MIT",
+  "author": "Masaki Morishita",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "styling",
+    "css",
+    "variants",
+    "cva",
+    "class-variance-authority",
+    "react",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morishxt/windctrl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/morishxt/windctrl/issues"
+  },
+  "homepage": "https://github.com/morishxt/windctrl#readme",
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  }
+}

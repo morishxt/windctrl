@@ -1,0 +1,39 @@
+# Source files
+src/
+examples/
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Config files
+tsconfig.json
+vitest.config.ts
+.gitignore
+.npmignore
+
+# Build artifacts (will be in dist/)
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Test files
+coverage/
+.nyc_output/
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
