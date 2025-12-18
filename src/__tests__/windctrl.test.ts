@@ -8,11 +8,11 @@ describe("windCtrl", () => {
         base: "rounded px-4 py-2",
       });
 
-      const result = button({});
+      const result = button();
       expect(result.className).toContain("rounded");
       expect(result.className).toContain("px-4");
       expect(result.className).toContain("py-2");
-      expect(result.style).toEqual({});
+      expect(result.style).toEqual(undefined);
     });
 
     it("should work without base classes", () => {
@@ -20,7 +20,7 @@ describe("windCtrl", () => {
 
       const result = button({});
       expect(result.className).toBe("");
-      expect(result.style).toEqual({});
+      expect(result.style).toEqual(undefined);
     });
   });
 
@@ -232,7 +232,7 @@ describe("windCtrl", () => {
 
       const result = button({ w: "full" });
       expect(result.className).toContain("w-full");
-      expect(result.style).toEqual({});
+      expect(result.style).toEqual(undefined);
     });
 
     it("should apply style when dynamic resolver returns object with style", () => {
@@ -295,7 +295,7 @@ describe("windCtrl", () => {
 
       const stringResult = button({ w: "full" });
       expect(stringResult.className).toContain("w-full");
-      expect(stringResult.style).toEqual({});
+      expect(stringResult.style).toEqual(undefined);
 
       const numberResult = button({ w: 300 });
       expect(numberResult.style).toEqual({ width: "300px" });
@@ -439,7 +439,7 @@ describe("windCtrl", () => {
       const button = windCtrl({});
       const result = button({});
       expect(result.className).toBe("");
-      expect(result.style).toEqual({});
+      expect(result.style).toEqual(undefined);
     });
 
     it("should handle undefined props gracefully", () => {

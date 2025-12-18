@@ -45,7 +45,7 @@ type Props<
 
 type Result = {
   className: string;
-  style: CSSProperties;
+  style?: CSSProperties;
 };
 
 function mergeStyles(
@@ -183,9 +183,11 @@ export function windCtrl<
 
     const finalClassName = twMerge(clsx(classNameParts));
 
+    const hasStyle = Object.keys(mergedStyle).length > 0;
+    
     return {
       className: finalClassName,
-      style: mergedStyle,
+      ...(hasStyle && { style: mergedStyle }),
     };
   };
 }
