@@ -43,10 +43,14 @@
     "test:coverage": "vitest --coverage",
     "build": "tsc",
     "dev": "tsc --watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },

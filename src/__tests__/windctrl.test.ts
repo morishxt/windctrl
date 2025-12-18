@@ -313,8 +313,12 @@ describe("windCtrl", () => {
       });
 
       const result = button({});
-      expect(result.className).toContain("group-data-[scope=header]/wind-scope:text-sm");
-      expect(result.className).toContain("group-data-[scope=footer]/wind-scope:text-xs");
+      expect(result.className).toContain(
+        "group-data-[scope=header]/wind-scope:text-sm",
+      );
+      expect(result.className).toContain(
+        "group-data-[scope=footer]/wind-scope:text-xs",
+      );
     });
 
     it("should combine scopes with base classes", () => {
@@ -328,7 +332,9 @@ describe("windCtrl", () => {
       const result = button({});
       expect(result.className).toContain("px-4");
       expect(result.className).toContain("py-2");
-      expect(result.className).toContain("group-data-[scope=header]/wind-scope:text-sm");
+      expect(result.className).toContain(
+        "group-data-[scope=header]/wind-scope:text-sm",
+      );
     });
   });
 
@@ -415,7 +421,9 @@ describe("windCtrl", () => {
 
       expect(result.style).toEqual({ width: "200px" });
 
-      expect(result.className).toContain("group-data-[scope=header]/wind-scope:text-sm");
+      expect(result.className).toContain(
+        "group-data-[scope=header]/wind-scope:text-sm",
+      );
     });
 
     it("should merge conflicting Tailwind classes (last one wins)", () => {
@@ -535,4 +543,3 @@ describe("windCtrl", () => {
     });
   });
 });
-

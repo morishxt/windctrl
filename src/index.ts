@@ -38,7 +38,9 @@ type Props<
 } & {
   traits?:
     | Array<keyof TTraits extends string ? keyof TTraits : never>
-    | Partial<Record<keyof TTraits extends string ? keyof TTraits : never, boolean>>;
+    | Partial<
+        Record<keyof TTraits extends string ? keyof TTraits : never, boolean>
+      >;
 } & {
   [K in keyof TDynamic]?: Parameters<TDynamic[K]>[0];
 };
@@ -48,15 +50,13 @@ type Result = {
   style?: CSSProperties;
 };
 
-function mergeStyles(
-  ...styles: (CSSProperties | undefined)[]
-): CSSProperties {
+function mergeStyles(...styles: (CSSProperties | undefined)[]): CSSProperties {
   return Object.assign({}, ...styles.filter(Boolean));
 }
 
 function processTraits<TTraits extends Record<string, ClassValue>>(
   traits: TTraits,
-  propsTraits?: Props<{}, TTraits>["traits"]
+  propsTraits?: Props<{}, TTraits>["traits"],
 ): ClassValue[] {
   if (!propsTraits) return [];
 
@@ -77,7 +77,7 @@ function processTraits<TTraits extends Record<string, ClassValue>>(
 
 function processDynamic<TDynamic extends Record<string, DynamicResolver>>(
   dynamic: TDynamic,
-  props: Props<{}, {}, TDynamic>
+  props: Props<{}, {}, TDynamic>,
 ): { className: ClassValue[]; style: CSSProperties } {
   const classNameParts: ClassValue[] = [];
   const styles: CSSProperties[] = [];
@@ -106,13 +106,12 @@ function processDynamic<TDynamic extends Record<string, DynamicResolver>>(
 }
 
 function processScopes<TScopes extends Record<string, ClassValue>>(
-  scopes: TScopes
+  scopes: TScopes,
 ): ClassValue[] {
   return Object.entries(scopes).map(([scopeName, scopeClasses]) => {
-    const classesStr = typeof scopeClasses === "string" 
-      ? scopeClasses 
-      : clsx(scopeClasses);
-    
+    const classesStr =
+      typeof scopeClasses === "string" ? scopeClasses : clsx(scopeClasses);
+
     return classesStr
       .split(/\s+/)
       .filter(Boolean)
@@ -127,7 +126,7 @@ export function windCtrl<
   TDynamic extends Record<string, DynamicResolver> = {},
   TScopes extends Record<string, ClassValue> = {},
 >(
-  config: Config<TVariants, TTraits, TDynamic, TScopes>
+  config: Config<TVariants, TTraits, TDynamic, TScopes>,
 ): (props?: Props<TVariants, TTraits, TDynamic>) => Result {
   const {
     base,
@@ -184,11 +183,10 @@ export function windCtrl<
     const finalClassName = twMerge(clsx(classNameParts));
 
     const hasStyle = Object.keys(mergedStyle).length > 0;
-    
+
     return {
       className: finalClassName,
       ...(hasStyle && { style: mergedStyle }),
     };
   };
 }
-

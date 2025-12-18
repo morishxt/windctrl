@@ -37,9 +37,7 @@ const button = windCtrl({
   },
   dynamic: {
     w: (val) =>
-      typeof val === "number"
-        ? { style: { width: `${val}px` } }
-        : `w-${val}`,
+      typeof val === "number" ? { style: { width: `${val}px` } } : `w-${val}`,
   },
   defaultVariants: {
     intent: "primary",
@@ -66,13 +64,9 @@ Dynamic props allow you to pass arbitrary values that can resolve to either Tail
 const button = windCtrl({
   dynamic: {
     w: (val) =>
-      typeof val === "number"
-        ? { style: { width: `${val}px` } }
-        : `w-${val}`,
+      typeof val === "number" ? { style: { width: `${val}px` } } : `w-${val}`,
     h: (val) =>
-      typeof val === "number"
-        ? { style: { height: `${val}px` } }
-        : `h-${val}`,
+      typeof val === "number" ? { style: { height: `${val}px` } } : `h-${val}`,
   },
 });
 
@@ -121,7 +115,6 @@ const button = windCtrl({
 ```
 
 The scope classes are automatically prefixed with `group-data-[scope=...]/wind-scope:` to work with Tailwind's group modifier.
-
 
 ### Variants
 

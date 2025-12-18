@@ -34,9 +34,7 @@ export function ButtonExample() {
             Loading (Object)
           </Button>
           <Button traits={["glass"]}>Glass Effect</Button>
-          <Button traits={["loading", "glass"]}>
-            Loading + Glass
-          </Button>
+          <Button traits={["loading", "glass"]}>Loading + Glass</Button>
           <Button traits={["disabled"]}>Disabled</Button>
         </div>
       </section>
@@ -59,19 +57,10 @@ export function ButtonExample() {
           <Button intent="secondary" size="lg" traits={["glass"]}>
             Secondary + Large + Glass
           </Button>
-          <Button
-            intent="primary"
-            size="sm"
-            traits={["loading"]}
-            w={120}
-          >
+          <Button intent="primary" size="sm" traits={["loading"]} w={120}>
             Primary + Small + Loading
           </Button>
-          <Button
-            intent="outline"
-            traits={["glass"]}
-            w="full"
-          >
+          <Button intent="outline" traits={["glass"]} w="full">
             Outline + Glass + Full Width
           </Button>
         </div>
@@ -87,16 +76,24 @@ export function ButtonExample() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Scopes (Context-aware styling)</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          Scopes (Context-aware styling)
+        </h2>
         <div className="space-y-4">
-          <div data-scope="header" className="group/wind-scope p-4 bg-gray-100 rounded">
+          <div
+            data-scope="header"
+            className="group/wind-scope p-4 bg-gray-100 rounded"
+          >
             <p className="mb-2 text-sm text-gray-600">Header scope:</p>
             <Button intent="primary">Header Button</Button>
             <p className="mt-2 text-xs text-gray-500">
               This button will have smaller text due to header scope
             </p>
           </div>
-          <div data-scope="footer" className="group/wind-scope p-4 bg-gray-100 rounded">
+          <div
+            data-scope="footer"
+            className="group/wind-scope p-4 bg-gray-100 rounded"
+          >
             <p className="mb-2 text-sm text-gray-600">Footer scope:</p>
             <Button intent="secondary">Footer Button</Button>
             <p className="mt-2 text-xs text-gray-500">
@@ -108,4 +105,3 @@ export function ButtonExample() {
     </div>
   );
 }
-

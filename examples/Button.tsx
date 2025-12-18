@@ -25,13 +25,9 @@ const button = windCtrl({
   },
   dynamic: {
     w: (val) =>
-      typeof val === "number"
-        ? { style: { width: `${val}px` } }
-        : `w-${val}`,
+      typeof val === "number" ? { style: { width: `${val}px` } } : `w-${val}`,
     h: (val) =>
-      typeof val === "number"
-        ? { style: { height: `${val}px` } }
-        : `h-${val}`,
+      typeof val === "number" ? { style: { height: `${val}px` } } : `h-${val}`,
   },
   defaultVariants: {
     intent: "primary",
@@ -47,7 +43,9 @@ type ButtonProps<T extends ElementType = "button"> = {
   as?: T;
   intent?: "primary" | "secondary" | "destructive" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
-  traits?: Array<"loading" | "glass" | "disabled"> | { loading?: boolean; glass?: boolean; disabled?: boolean };
+  traits?:
+    | Array<"loading" | "glass" | "disabled">
+    | { loading?: boolean; glass?: boolean; disabled?: boolean };
   w?: string | number;
   h?: string | number;
 } & ComponentPropsWithoutRef<T>;
@@ -83,4 +81,3 @@ export function Button<T extends ElementType = "button">({
     </Component>
   );
 }
-
