@@ -1,9 +1,9 @@
 {
   "name": "windctrl",
   "version": "0.0.1",
-  "description": "Next-generation styling library for Tailwind CSS",
+  "description": "Advanced variant API for Tailwind CSS with stackable traits and interpolated dynamic styles.",
   "license": "MIT",
-  "author": "Masaki Morishita",
+  "author": "Masaki Morishita (@morishxt)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,13 +22,15 @@
   "keywords": [
     "tailwind",
     "tailwindcss",
-    "styling",
-    "css",
     "variants",
     "cva",
-    "class-variance-authority",
-    "react",
-    "typescript"
+    "styling",
+    "clsx",
+    "tailwind-merge",
+    "rsc",
+    "css-in-js",
+    "traits",
+    "interpolation"
   ],
   "repository": {
     "type": "git",

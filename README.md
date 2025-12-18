@@ -1,17 +1,25 @@
 # WindCtrl
 
-> Next-generation styling library for Tailwind CSS
+> Advanced variant API for Tailwind CSS with stackable traits and interpolated dynamic styles.
 
-WindCtrl is a powerful styling library that evolves the concept of Variant APIs (like CVA) by introducing **Traits** for composable states and **Interpolated Variants** for dynamic values, all while maintaining a zero-runtime-dependency philosophy for style injection.
+**WindCtrl** is a next-generation styling utility that unifies static Tailwind classes and dynamic inline styles into a single, type-safe interface.
+
+It evolves the concept of Variant APIs (like [cva](https://cva.style/)) by introducing **Stackable Traits** to solve combinatorial explosion and **Interpolated Variants** for seamless dynamic value handling—all while maintaining a minimal runtime footprint optimized for Tailwind's JIT compiler.
 
 ## Features
 
-- 🎨 **Unified API** - Hides the distinction between static Tailwind classes and dynamic inline styles
-- 🧩 **Trait System** - Solves combinatorial explosion by treating states as stackable, non-exclusive layers
-- 🎯 **Scoped Styling** - Context-aware styling without React Context (RSC friendly)
-- 🔒 **Type-Safe** - Full TypeScript support with intelligent type inference
-- 📦 **Zero Runtime** - Minimal bundle size with only `clsx` and `tailwind-merge` as dependencies
-- ⚡ **Performance** - Optimized for render performance
+- 🎨 **Unified API** - Seamlessly blends static Tailwind classes and dynamic inline styles into one cohesive interface.
+- 🧩 **Trait System** - Solves combinatorial explosion by treating states as stackable, non-exclusive layers.
+- 🎯 **Scoped Styling** - Context-aware styling using data attributes - no React Context required (RSC friendly).
+- ⚡ **JIT Optimized** - Prevents CSS bundle bloat by intelligently routing arbitrary values to inline styles.
+- 🔒 **Type-Safe** - Best-in-class TypeScript support with automatic prop inference.
+- 📦 **Minimal Overhead** - Ultra-lightweight runtime with only `clsx` and `tailwind-merge` as dependencies.
+
+## Installation
+
+```bash
+npm install windctrl
+```
 
 ## Quick Start
 
