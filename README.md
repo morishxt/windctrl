@@ -11,7 +11,7 @@ It evolves the concept of Variant APIs (like [cva](https://cva.style/)) by intro
 - 🎨 **Unified API** - Seamlessly blends static Tailwind classes and dynamic inline styles into one cohesive interface.
 - 🧩 **Trait System** - Solves combinatorial explosion by treating states as stackable, non-exclusive layers.
 - 🎯 **Scoped Styling** - Context-aware styling using data attributes - no React Context required (RSC friendly).
-- ⚡ **JIT Optimized** - Prevents CSS bundle bloat by intelligently routing arbitrary values to inline styles.
+- ⚡ **JIT Conscious** - Designed for Tailwind JIT: utilities stay as class strings, while truly dynamic values can be expressed as inline styles.
 - 🔒 **Type-Safe** - Best-in-class TypeScript support with automatic prop inference.
 - 📦 **Minimal Overhead** - Ultra-lightweight runtime with only `clsx` and `tailwind-merge` as dependencies.
 
@@ -82,27 +82,40 @@ button({ w: "w-full" });
 
 ### Interpolated Variants (Dynamic Props)
 
-Interpolated variants provide a **Unified API** that bridges the gap between static Tailwind classes and dynamic inline styles. You can pass arbitrary values (handled as inline styles) or utility strings (handled as static classes) through a single prop, without breaking Tailwind's JIT compilation.
+Interpolated variants provide a **Unified API** that bridges static Tailwind classes and dynamic inline styles. A dynamic resolver can return either:
+
+- a **Tailwind class string** (static utility), or
+- an object containing **className and/or style** (inline styles and optional utilities)
+
+This is **JIT-friendly by design**, as long as the class strings you return are statically enumerable (i.e. appear in your source code).
+For truly unbounded values (e.g. pixel sizes), prefer returning style to avoid relying on arbitrary-value class generation.
 
 ```typescript
 const button = windCtrl({
   dynamic: {
-    // ⚡ JIT Friendly Pattern:
-    // Numbers -> Inline styles (bypassing JIT)
-    // Strings -> Static classes (scanned by JIT)
+    // Recommended pattern:
+    // - Numbers -> inline styles (unbounded values)
+    // - Strings -> Tailwind utilities (must be statically enumerable for JIT)
     w: (val) =>
       typeof val === "number" ? { style: { width: `${val}px` } } : val,
   },
 });
 
 // Usage
-button({ w: "w-full" }); // -> className="w-full" (Static)
-button({ w: 200 }); // -> style="width: 200px" (Dynamic)
+button({ w: "w-full" }); // -> className includes "w-full" (static utility)
+button({ w: 200 });      // -> style includes { width: "200px" } (dynamic value)
 ```
+
+> **Note on Tailwind JIT**: Tailwind only generates CSS for class names it can statically detect in your source. Avoid constructing class strings dynamically (e.g. "`w-`" + `size`) unless you safelist them in your Tailwind config.
 
 ### Traits (Stackable States)
 
 Traits are non-exclusive, stackable layers of state. Unlike `variants` (which are mutually exclusive), multiple traits can be active simultaneously. This declarative approach solves the "combinatorial explosion" problem often seen with `compoundVariants`.
+
+Traits are **non-exclusive, stackable modifiers**. Unlike variants (mutually exclusive design choices), multiple traits can be active at the same time. This is a practical way to model boolean-like component states (e.g. `loading`, `disabled`, `glass`) without exploding compoundVariants.
+
+When multiple traits generate conflicting utilities, Tailwind’s “last one wins” rule applies (via `tailwind-merge`).
+If ordering matters, prefer the **array form** to make precedence explicit.
 
 ```typescript
 const button = windCtrl({
@@ -113,10 +126,10 @@ const button = windCtrl({
   },
 });
 
-// Usage - Array form (Clean & Type-safe)
+// Usage - Array form (explicit precedence; recommended when conflicts are possible)
 button({ traits: ["loading", "glass"] });
 
-// Usage - Object form (Great for boolean props)
+// Usage - Object form (convenient for boolean props; order is not intended to be meaningful)
 button({ traits: { loading: isLoading, glass: true } });
 ```
 
@@ -168,6 +181,12 @@ const button = windCtrl({
 // Usage
 button({ intent: "primary", size: "lg" });
 ```
+
+## Gotchas
+
+- **Tailwind JIT:** Tailwind only generates CSS for class names it can statically detect. Avoid constructing class strings dynamically unless you safelist them.
+- **Traits precedence:** If trait order matters, use the array form (`traits: ["a", "b"]`) to make precedence explicit.
+- **SSR/RSC:** Keep dynamic resolvers pure (same input → same output) to avoid hydration mismatches.
 
 ## License
 
