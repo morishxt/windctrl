@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { windCtrl } from "../index";
+import { windCtrl } from "./";
 
 describe("windCtrl", () => {
   describe("Base classes", () => {

@@ -103,7 +103,7 @@ const button = windCtrl({
 
 // Usage
 button({ w: "w-full" }); // -> className includes "w-full" (static utility)
-button({ w: 200 });      // -> style includes { width: "200px" } (dynamic value)
+button({ w: 200 }); // -> style includes { width: "200px" } (dynamic value)
 ```
 
 > **Note on Tailwind JIT**: Tailwind only generates CSS for class names it can statically detect in your source. Avoid constructing class strings dynamically (e.g. "`w-`" + `size`) unless you safelist them in your Tailwind config.
@@ -187,6 +187,7 @@ button({ intent: "primary", size: "lg" });
 - **Tailwind JIT:** Tailwind only generates CSS for class names it can statically detect. Avoid constructing class strings dynamically unless you safelist them.
 - **Traits precedence:** If trait order matters, use the array form (`traits: ["a", "b"]`) to make precedence explicit.
 - **SSR/RSC:** Keep dynamic resolvers pure (same input → same output) to avoid hydration mismatches.
+- **Static config:** `windCtrl` configuration is treated as static/immutable. Mutating the config object after creation is not supported.
 
 ## License
 
