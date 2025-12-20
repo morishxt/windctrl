@@ -1,10 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { windCtrl } from "./";
+import { windctrl, wc } from "./";
 
-describe("windCtrl", () => {
+describe("wc", () => {
+  it("should be the same as windctrl", () => {
+    expect(wc).toBe(windctrl);
+  });
+});
+
+describe("windctrl", () => {
   describe("Base classes", () => {
     it("should apply base classes when provided", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded px-4 py-2",
       });
 
@@ -16,7 +22,7 @@ describe("windCtrl", () => {
     });
 
     it("should work without base classes", () => {
-      const button = windCtrl({});
+      const button = windctrl({});
 
       const result = button({});
       expect(result.className).toBe("");
@@ -26,7 +32,7 @@ describe("windCtrl", () => {
 
   describe("Variants", () => {
     it("should apply variant classes based on prop value", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         variants: {
           intent: {
@@ -48,7 +54,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle multiple variant dimensions", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           size: {
             sm: "text-sm",
@@ -68,7 +74,7 @@ describe("windCtrl", () => {
     });
 
     it("should not apply variant classes when prop is not provided", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -85,7 +91,7 @@ describe("windCtrl", () => {
 
   describe("Default variants", () => {
     it("should apply default variant values when prop is not provided", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -102,7 +108,7 @@ describe("windCtrl", () => {
     });
 
     it("should allow overriding default variants", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -120,7 +126,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle multiple default variants", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           size: {
             sm: "text-sm",
@@ -145,7 +151,7 @@ describe("windCtrl", () => {
 
   describe("Traits", () => {
     it("should apply trait classes when provided as array", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         traits: {
           loading: "opacity-50 cursor-wait",
@@ -162,7 +168,7 @@ describe("windCtrl", () => {
     });
 
     it("should apply trait classes when provided as object", () => {
-      const button = windCtrl({
+      const button = windctrl({
         traits: {
           loading: "opacity-50",
           glass: "backdrop-blur",
@@ -179,7 +185,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle empty traits array", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         traits: {
           loading: "opacity-50",
@@ -192,7 +198,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle empty traits object", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         traits: {
           loading: "opacity-50",
@@ -205,7 +211,7 @@ describe("windCtrl", () => {
     });
 
     it("should apply multiple traits orthogonally", () => {
-      const button = windCtrl({
+      const button = windctrl({
         traits: {
           loading: "opacity-50",
           glass: "backdrop-blur",
@@ -224,7 +230,7 @@ describe("windCtrl", () => {
 
   describe("Dynamic (Interpolated Variants)", () => {
     it("should apply className when dynamic resolver returns string", () => {
-      const button = windCtrl({
+      const button = windctrl({
         dynamic: {
           w: (val) => (typeof val === "number" ? `w-[${val}px]` : `w-${val}`),
         },
@@ -236,7 +242,7 @@ describe("windCtrl", () => {
     });
 
     it("should apply style when dynamic resolver returns object with style", () => {
-      const button = windCtrl({
+      const button = windctrl({
         dynamic: {
           w: (val) =>
             typeof val === "number"
@@ -250,7 +256,7 @@ describe("windCtrl", () => {
     });
 
     it("should merge className and style when dynamic resolver returns both", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         dynamic: {
           color: (val) => ({
@@ -266,7 +272,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle multiple dynamic props", () => {
-      const button = windCtrl({
+      const button = windctrl({
         dynamic: {
           w: (val) =>
             typeof val === "number"
@@ -284,7 +290,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle mixed dynamic props (string and number)", () => {
-      const button = windCtrl({
+      const button = windctrl({
         dynamic: {
           w: (val) =>
             typeof val === "number"
@@ -304,7 +310,7 @@ describe("windCtrl", () => {
 
   describe("Scopes", () => {
     it("should apply scope classes with group-data selector", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded",
         scopes: {
           header: "text-sm",
@@ -322,7 +328,7 @@ describe("windCtrl", () => {
     });
 
     it("should combine scopes with base classes", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "px-4 py-2",
         scopes: {
           header: "text-sm",
@@ -340,7 +346,7 @@ describe("windCtrl", () => {
 
   describe("Priority and Integration", () => {
     it("should apply classes in correct priority: Dynamic > Traits > Variants > Base", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "base-class",
         variants: {
           intent: {
@@ -368,7 +374,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle complex real-world scenario", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "rounded px-4 py-2 font-medium transition",
         variants: {
           intent: {
@@ -427,7 +433,7 @@ describe("windCtrl", () => {
     });
 
     it("should merge conflicting Tailwind classes (last one wins)", () => {
-      const button = windCtrl({
+      const button = windctrl({
         base: "text-red-500",
         variants: {
           intent: {
@@ -444,14 +450,14 @@ describe("windCtrl", () => {
 
   describe("Edge cases", () => {
     it("should handle empty configuration", () => {
-      const button = windCtrl({});
+      const button = windctrl({});
       const result = button({});
       expect(result.className).toBe("");
       expect(result.style).toEqual(undefined);
     });
 
     it("should handle undefined props gracefully", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -464,7 +470,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle null props gracefully", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -477,7 +483,7 @@ describe("windCtrl", () => {
     });
 
     it("should handle traits with invalid keys gracefully", () => {
-      const button = windCtrl({
+      const button = windctrl({
         traits: {
           loading: "opacity-50",
         },
@@ -490,7 +496,7 @@ describe("windCtrl", () => {
 
   describe("Type safety", () => {
     it("should infer variant prop types correctly", () => {
-      const button = windCtrl({
+      const button = windctrl({
         variants: {
           intent: {
             primary: "bg-blue-500",
@@ -507,7 +513,7 @@ describe("windCtrl", () => {
     });
 
     it("should infer trait keys correctly", () => {
-      const button = windCtrl({
+      const button = windctrl({
         traits: {
           loading: "opacity-50",
           glass: "backdrop-blur",
@@ -526,7 +532,7 @@ describe("windCtrl", () => {
     });
 
     it("should infer dynamic prop types correctly", () => {
-      const button = windCtrl({
+      const button = windctrl({
         dynamic: {
           w: (val) =>
             typeof val === "number"
