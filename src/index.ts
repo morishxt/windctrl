@@ -120,7 +120,7 @@ function processScopes<TScopes extends Record<string, ClassValue>>(
   });
 }
 
-export function windCtrl<
+export function windctrl<
   TVariants extends Record<string, Record<string, ClassValue>> = {},
   TTraits extends Record<string, ClassValue> = {},
   TDynamic extends Record<string, DynamicResolver> = {},
