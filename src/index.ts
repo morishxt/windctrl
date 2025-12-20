@@ -75,15 +75,15 @@ function processTraits<TTraits extends Record<string, ClassValue>>(
   return [];
 }
 
-function processDynamic<TDynamic extends Record<string, DynamicResolver>>(
-  dynamic: TDynamic,
-  props: Props<{}, {}, TDynamic>,
+function processDynamicEntries(
+  entries: [string, DynamicResolver][],
+  props: Record<string, any>,
 ): { className: ClassValue[]; style: CSSProperties } {
   const classNameParts: ClassValue[] = [];
   const styles: CSSProperties[] = [];
 
-  for (const [key, resolver] of Object.entries(dynamic)) {
-    const value = props[key as keyof TDynamic];
+  for (const [key, resolver] of entries) {
+    const value = props[key];
     if (value !== undefined && value !== null) {
       const result = resolver(value);
       if (typeof result === "string") {
@@ -137,6 +137,14 @@ export function windCtrl<
     defaultVariants = {},
   } = config;
 
+  const resolvedVariants = Object.entries(variants) as [
+    string,
+    Record<string, ClassValue>,
+  ][];
+  const resolvedDynamicEntries = Object.entries(dynamic) as [
+    string,
+    DynamicResolver,
+  ][];
   const resolvedScopeClasses = processScopes(scopes);
 
   return (props = {} as Props<TVariants, TTraits, TDynamic>) => {
@@ -152,26 +160,26 @@ export function windCtrl<
     }
 
     // 2. Variants (with defaultVariants fallback)
-    if (variants) {
-      for (const [variantKey, variantOptions] of Object.entries(variants)) {
-        const propValue =
-          props[variantKey as keyof typeof props] ??
-          defaultVariants[variantKey as keyof typeof defaultVariants];
-        if (propValue && variantOptions[propValue as string]) {
-          classNameParts.push(variantOptions[propValue as string]);
-        }
+    for (const [variantKey, variantOptions] of resolvedVariants) {
+      const propValue =
+        props[variantKey as keyof typeof props] ??
+        defaultVariants[variantKey as keyof typeof defaultVariants];
+      if (propValue && variantOptions[propValue as string]) {
+        classNameParts.push(variantOptions[propValue as string]);
       }
     }
 
     // 3. Traits (higher priority than variants)
-    if (traits && props.traits) {
-      const traitClasses = processTraits(traits, props.traits);
-      classNameParts.push(...traitClasses);
+    if (props.traits) {
+      classNameParts.push(...processTraits(traits, props.traits));
     }
 
     // 4. Dynamic (highest priority for className)
-    if (dynamic) {
-      const dynamicResult = processDynamic(dynamic, props);
+    if (resolvedDynamicEntries.length) {
+      const dynamicResult = processDynamicEntries(
+        resolvedDynamicEntries,
+        props,
+      );
       classNameParts.push(...dynamicResult.className);
       mergedStyle = mergeStyles(mergedStyle, dynamicResult.style);
     }
