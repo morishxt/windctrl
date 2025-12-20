@@ -306,6 +306,19 @@ describe("windctrl", () => {
       const numberResult = button({ w: 300 });
       expect(numberResult.style).toEqual({ width: "300px" });
     });
+
+    it("should resolve style conflicts with last one wins for dynamic styles", () => {
+      const box = windctrl({
+        dynamic: {
+          w1: () => ({ style: { width: "100px" } }),
+          w2: () => ({ style: { width: "200px" } }),
+        },
+      });
+
+      const result = box({ w1: true as any, w2: true as any });
+
+      expect(result.style).toEqual({ width: "200px" });
+    });
   });
 
   describe("Scopes", () => {
@@ -340,6 +353,23 @@ describe("windctrl", () => {
       expect(result.className).toContain("py-2");
       expect(result.className).toContain(
         "group-data-[scope=header]/wind-scope:text-sm",
+      );
+    });
+
+    it("should prefix every scope class when multiple classes are provided", () => {
+      const button = windctrl({
+        scopes: {
+          header: "text-sm py-1",
+        },
+      });
+
+      const result = button({});
+
+      expect(result.className).toContain(
+        "group-data-[scope=header]/wind-scope:text-sm",
+      );
+      expect(result.className).toContain(
+        "group-data-[scope=header]/wind-scope:py-1",
       );
     });
   });
@@ -445,6 +475,34 @@ describe("windctrl", () => {
       const result = button({ intent: "primary" });
       expect(result.className).toContain("text-blue-500");
       expect(result.className).not.toContain("text-red-500");
+    });
+
+    it("should let Dynamic override Traits when Tailwind classes conflict (via twMerge)", () => {
+      const button = windctrl({
+        traits: {
+          padded: "p-2",
+        },
+        dynamic: {
+          p: (val) => (typeof val === "number" ? `p-${val}` : val),
+        },
+      });
+
+      const result = button({ traits: ["padded"], p: 4 });
+
+      expect(result.className).toContain("p-4");
+      expect(result.className).not.toContain("p-2");
+    });
+
+    it("should let Traits override Base when Tailwind classes conflict (via twMerge)", () => {
+      const button = windctrl({
+        base: "p-1",
+        traits: { padded: "p-3" },
+      });
+
+      const result = button({ traits: ["padded"] });
+
+      expect(result.className).toContain("p-3");
+      expect(result.className).not.toContain("p-1");
     });
   });
 
