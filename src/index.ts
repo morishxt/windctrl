@@ -137,6 +137,8 @@ export function windCtrl<
     defaultVariants = {},
   } = config;
 
+  const resolvedScopeClasses = processScopes(scopes);
+
   return (props = {} as Props<TVariants, TTraits, TDynamic>) => {
     const classNameParts: ClassValue[] = [];
     let mergedStyle: CSSProperties = {};
@@ -175,9 +177,8 @@ export function windCtrl<
     }
 
     // 5. Scopes (always applied, but don't conflict with other classes)
-    if (scopes) {
-      const scopeClasses = processScopes(scopes);
-      classNameParts.push(...scopeClasses);
+    if (resolvedScopeClasses.length) {
+      classNameParts.push(...resolvedScopeClasses);
     }
 
     const finalClassName = twMerge(clsx(classNameParts));
