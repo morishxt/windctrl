@@ -199,3 +199,5 @@ export function windctrl<
     };
   };
 }
+
+export const wc = windctrl;
