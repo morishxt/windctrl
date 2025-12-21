@@ -1,3 +1,7 @@
+## v0.1.1
+
+- Rename `data-*` for `scopes` to avoid name conflicts https://github.com/morishxt/windctrl/pull/4
+
 ## v0.1.0
 
 - Rename export function: `windCtrl` -> `windctrl` (& add `wc` as an alias) https://github.com/morishxt/windctrl/pull/2

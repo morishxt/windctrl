@@ -1,6 +1,6 @@
 {
   "name": "windctrl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Advanced variant API for Tailwind CSS with stackable traits and interpolated dynamic styles.",
   "license": "MIT",
   "author": "Masaki Morishita (@morishxt)",
