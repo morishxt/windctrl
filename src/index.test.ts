@@ -333,10 +333,10 @@ describe("windctrl", () => {
 
       const result = button({});
       expect(result.className).toContain(
-        "group-data-[scope=header]/wind-scope:text-sm",
+        "group-data-[windctrl-scope=header]/windctrl-scope:text-sm",
       );
       expect(result.className).toContain(
-        "group-data-[scope=footer]/wind-scope:text-xs",
+        "group-data-[windctrl-scope=footer]/windctrl-scope:text-xs",
       );
     });
 
@@ -352,7 +352,7 @@ describe("windctrl", () => {
       expect(result.className).toContain("px-4");
       expect(result.className).toContain("py-2");
       expect(result.className).toContain(
-        "group-data-[scope=header]/wind-scope:text-sm",
+        "group-data-[windctrl-scope=header]/windctrl-scope:text-sm",
       );
     });
 
@@ -366,10 +366,10 @@ describe("windctrl", () => {
       const result = button({});
 
       expect(result.className).toContain(
-        "group-data-[scope=header]/wind-scope:text-sm",
+        "group-data-[windctrl-scope=header]/windctrl-scope:text-sm",
       );
       expect(result.className).toContain(
-        "group-data-[scope=header]/wind-scope:py-1",
+        "group-data-[windctrl-scope=header]/windctrl-scope:py-1",
       );
     });
   });
@@ -458,7 +458,7 @@ describe("windctrl", () => {
       expect(result.style).toEqual({ width: "200px" });
 
       expect(result.className).toContain(
-        "group-data-[scope=header]/wind-scope:text-sm",
+        "group-data-[windctrl-scope=header]/windctrl-scope:text-sm",
       );
     });
 

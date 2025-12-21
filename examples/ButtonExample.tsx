@@ -81,8 +81,8 @@ export function ButtonExample() {
         </h2>
         <div className="space-y-4">
           <div
-            data-scope="header"
-            className="group/wind-scope p-4 bg-gray-100 rounded"
+            data-windctrl-scope="header"
+            className="group/windctrl-scope p-4 bg-gray-100 rounded"
           >
             <p className="mb-2 text-sm text-gray-600">Header scope:</p>
             <Button intent="primary">Header Button</Button>
@@ -91,8 +91,8 @@ export function ButtonExample() {
             </p>
           </div>
           <div
-            data-scope="footer"
-            className="group/wind-scope p-4 bg-gray-100 rounded"
+            data-windctrl-scope="footer"
+            className="group/windctrl-scope p-4 bg-gray-100 rounded"
           >
             <p className="mb-2 text-sm text-gray-600">Footer scope:</p>
             <Button intent="secondary">Footer Button</Button>
