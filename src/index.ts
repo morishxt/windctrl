@@ -74,13 +74,17 @@ export const dynamic = {
   var: cssVar,
 };
 
+type SlotAwareValue =
+  | ClassValue
+  | { root?: ClassValue; slots?: Record<string, ClassValue> };
+
 type Config<
-  TVariants extends Record<string, Record<string, ClassValue>> = {},
-  TTraits extends Record<string, ClassValue> = {},
+  TVariants extends Record<string, Record<string, SlotAwareValue>> = {},
+  TTraits extends Record<string, SlotAwareValue> = {},
   TDynamic extends Record<string, DynamicResolver> = {},
   TScopes extends Record<string, ClassValue> = {},
 > = {
-  base?: ClassValue;
+  base?: SlotAwareValue;
   variants?: TVariants;
   traits?: TTraits;
   dynamic?: TDynamic;
@@ -93,8 +97,8 @@ type Config<
 };
 
 type Props<
-  TVariants extends Record<string, Record<string, ClassValue>> = {},
-  TTraits extends Record<string, ClassValue> = {},
+  TVariants extends Record<string, Record<string, SlotAwareValue>> = {},
+  TTraits extends Record<string, SlotAwareValue> = {},
   TDynamic extends Record<string, DynamicResolver> = {},
 > = {
   [K in keyof TVariants]?: keyof TVariants[K] extends string
@@ -113,31 +117,75 @@ type Props<
 type Result = {
   className: string;
   style?: CSSProperties;
+  slots?: Record<string, string>;
 };
 
 function mergeStyles(...styles: (CSSProperties | undefined)[]): CSSProperties {
   return Object.assign({}, ...styles.filter(Boolean));
 }
 
-function processTraits<TTraits extends Record<string, ClassValue>>(
+function isSlotAwareValue(
+  value: unknown,
+): value is { root?: ClassValue; slots?: Record<string, ClassValue> } {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const obj = value as Record<string, unknown>;
+  const hasRoot = "root" in obj;
+  const hasSlots =
+    "slots" in obj && typeof obj.slots === "object" && obj.slots !== null;
+  return hasRoot || hasSlots;
+}
+
+function addSlotClasses(
+  slotParts: Record<string, ClassValue[]>,
+  slots: Record<string, ClassValue>,
+): void {
+  for (const [slotName, slotClasses] of Object.entries(slots)) {
+    if (!slotParts[slotName]) {
+      slotParts[slotName] = [];
+    }
+    slotParts[slotName].push(slotClasses);
+  }
+}
+
+function processTraits<TTraits extends Record<string, SlotAwareValue>>(
   traits: TTraits,
   propsTraits?: Props<{}, TTraits>["traits"],
+  slotParts?: Record<string, ClassValue[]>,
 ): ClassValue[] {
   if (!propsTraits) return [];
 
+  const rootClasses: ClassValue[] = [];
+
+  const processTraitKey = (key: string) => {
+    if (!(key in traits)) return;
+    const traitValue = traits[key as keyof TTraits];
+    if (isSlotAwareValue(traitValue)) {
+      if (traitValue.root) {
+        rootClasses.push(traitValue.root);
+      }
+      if (traitValue.slots && slotParts) {
+        addSlotClasses(slotParts, traitValue.slots);
+      }
+    } else {
+      rootClasses.push(traitValue);
+    }
+  };
+
   if (Array.isArray(propsTraits)) {
-    return propsTraits
-      .filter((key) => key in traits)
-      .map((key) => traits[key as keyof TTraits]);
+    for (const key of propsTraits) {
+      processTraitKey(key);
+    }
+  } else if (typeof propsTraits === "object") {
+    for (const [key, value] of Object.entries(propsTraits)) {
+      if (value) {
+        processTraitKey(key);
+      }
+    }
   }
 
-  if (typeof propsTraits === "object") {
-    return Object.entries(propsTraits)
-      .filter(([key, value]) => value && key in traits)
-      .map(([key]) => traits[key as keyof TTraits]);
-  }
-
-  return [];
+  return rootClasses;
 }
 
 function processDynamicEntries(
@@ -189,8 +237,8 @@ function processScopes<TScopes extends Record<string, ClassValue>>(
 }
 
 export function windctrl<
-  TVariants extends Record<string, Record<string, ClassValue>> = {},
-  TTraits extends Record<string, ClassValue> = {},
+  TVariants extends Record<string, Record<string, SlotAwareValue>> = {},
+  TTraits extends Record<string, SlotAwareValue> = {},
   TDynamic extends Record<string, DynamicResolver> = {},
   TScopes extends Record<string, ClassValue> = {},
 >(
@@ -207,7 +255,7 @@ export function windctrl<
 
   const resolvedVariants = Object.entries(variants) as [
     string,
-    Record<string, ClassValue>,
+    Record<string, SlotAwareValue>,
   ][];
   const resolvedDynamicEntries = Object.entries(dynamic) as [
     string,
@@ -218,13 +266,23 @@ export function windctrl<
   return (props = {} as Props<TVariants, TTraits, TDynamic>) => {
     const classNameParts: ClassValue[] = [];
     let mergedStyle: CSSProperties = {};
+    const slotParts: Record<string, ClassValue[]> = {};
 
     // Priority order: Base < Variants < Traits < Dynamic
     // (Higher priority classes are added later, so tailwind-merge will keep them)
 
     // 1. Base classes (lowest priority)
     if (base) {
-      classNameParts.push(base);
+      if (isSlotAwareValue(base)) {
+        if (base.root) {
+          classNameParts.push(base.root);
+        }
+        if (base.slots) {
+          addSlotClasses(slotParts, base.slots);
+        }
+      } else {
+        classNameParts.push(base);
+      }
     }
 
     // 2. Variants (with defaultVariants fallback)
@@ -233,13 +291,23 @@ export function windctrl<
         props[variantKey as keyof typeof props] ??
         defaultVariants[variantKey as keyof typeof defaultVariants];
       if (propValue && variantOptions[propValue as string]) {
-        classNameParts.push(variantOptions[propValue as string]);
+        const optionValue = variantOptions[propValue as string];
+        if (isSlotAwareValue(optionValue)) {
+          if (optionValue.root) {
+            classNameParts.push(optionValue.root);
+          }
+          if (optionValue.slots) {
+            addSlotClasses(slotParts, optionValue.slots);
+          }
+        } else {
+          classNameParts.push(optionValue);
+        }
       }
     }
 
     // 3. Traits (higher priority than variants)
     if (props.traits) {
-      classNameParts.push(...processTraits(traits, props.traits));
+      classNameParts.push(...processTraits(traits, props.traits, slotParts));
     }
 
     // 4. Dynamic (highest priority for className)
@@ -261,9 +329,25 @@ export function windctrl<
 
     const hasStyle = Object.keys(mergedStyle).length > 0;
 
+    let finalSlots: Record<string, string> | undefined;
+    const slotNames = Object.keys(slotParts);
+    if (slotNames.length > 0) {
+      finalSlots = {};
+      for (const slotName of slotNames) {
+        const merged = twMerge(clsx(slotParts[slotName]));
+        if (merged) {
+          finalSlots[slotName] = merged;
+        }
+      }
+      if (Object.keys(finalSlots).length === 0) {
+        finalSlots = undefined;
+      }
+    }
+
     return {
       className: finalClassName,
       ...(hasStyle && { style: mergedStyle }),
+      ...(finalSlots && { slots: finalSlots }),
     };
   };
 }
