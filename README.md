@@ -136,14 +136,14 @@ const button = windctrl({
 });
 
 // Usage
-// 1. Wrap the parent with `data-scope` and `group/wind-scope`
+// 1. Wrap the parent with `data-windctrl-scope` and `group/windctrl-scope`
 // 2. The button automatically adapts its style based on the parent
-<div data-scope="header" className="group/wind-scope">
+<div data-windctrl-scope="header" className="group/windctrl-scope">
   <button className={button().className}>Header Button</button>
 </div>
 ```
 
-The scope classes are automatically prefixed with `group-data-[scope=...]/wind-scope:` to target the parent's data attribute.
+The scope classes are automatically prefixed with `group-data-[windctrl-scope=...]/windctrl-scope:` to target the parent's data attribute.
 
 ### Variants
 

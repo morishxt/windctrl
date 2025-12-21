@@ -115,7 +115,10 @@ function processScopes<TScopes extends Record<string, ClassValue>>(
     return classesStr
       .split(/\s+/)
       .filter(Boolean)
-      .map((cls) => `group-data-[scope=${scopeName}]/wind-scope:${cls}`)
+      .map(
+        (cls) =>
+          `group-data-[windctrl-scope=${scopeName}]/windctrl-scope:${cls}`,
+      )
       .join(" ");
   });
 }
