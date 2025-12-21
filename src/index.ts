@@ -74,9 +74,11 @@ export const dynamic = {
   var: cssVar,
 };
 
-type SlotAwareValue =
-  | ClassValue
-  | { root?: ClassValue; slots?: Record<string, ClassValue> };
+type SlotAwareObject = {
+  root?: ClassValue;
+  slots?: Record<string, ClassValue>;
+};
+type SlotAwareValue = ClassValue | SlotAwareObject;
 
 type Config<
   TVariants extends Record<string, Record<string, SlotAwareValue>> = {},
@@ -114,19 +116,39 @@ type Props<
   [K in keyof TDynamic]?: Parameters<TDynamic[K]>[0];
 };
 
-type Result = {
+type SlotsOfValue<V> = V extends { slots?: infer S }
+  ? S extends Record<string, any>
+    ? keyof S
+    : never
+  : never;
+
+type VariantOptionValues<T> =
+  T extends Record<string, Record<string, infer V>> ? V : never;
+
+type TraitValues<T> = T extends Record<string, infer V> ? V : never;
+
+type SlotKeys<
+  TBase,
+  TVariants extends Record<string, Record<string, any>>,
+  TTraits extends Record<string, any>,
+> = Extract<
+  | SlotsOfValue<TBase>
+  | SlotsOfValue<VariantOptionValues<TVariants>>
+  | SlotsOfValue<TraitValues<TTraits>>,
+  string
+>;
+
+type Result<TSlotKeys extends string = never> = {
   className: string;
   style?: CSSProperties;
-  slots?: Record<string, string>;
+  slots?: Partial<Record<TSlotKeys, string>>;
 };
 
 function mergeStyles(...styles: (CSSProperties | undefined)[]): CSSProperties {
   return Object.assign({}, ...styles.filter(Boolean));
 }
 
-function isSlotAwareValue(
-  value: unknown,
-): value is { root?: ClassValue; slots?: Record<string, ClassValue> } {
+function isSlotAwareValue(value: unknown): value is SlotAwareObject {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }
@@ -243,7 +265,9 @@ export function windctrl<
   TScopes extends Record<string, ClassValue> = {},
 >(
   config: Config<TVariants, TTraits, TDynamic, TScopes>,
-): (props?: Props<TVariants, TTraits, TDynamic>) => Result {
+): (
+  props?: Props<TVariants, TTraits, TDynamic>,
+) => Result<SlotKeys<typeof config.base, TVariants, TTraits>> {
   const {
     base,
     variants = {} as TVariants,
@@ -348,7 +372,7 @@ export function windctrl<
       className: finalClassName,
       ...(hasStyle && { style: mergedStyle }),
       ...(finalSlots && { slots: finalSlots }),
-    };
+    } as Result<SlotKeys<typeof config.base, TVariants, TTraits>>;
   };
 }
 
