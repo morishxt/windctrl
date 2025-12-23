@@ -1,3 +1,8 @@
+## v0.2.0
+
+- Preset functions for `dynamic` https://github.com/morishxt/windctrl/pull/6
+- Introduce `slots` https://github.com/morishxt/windctrl/pull/5
+
 ## v0.1.1
 
 - Rename `data-*` for `scopes` to avoid name conflicts https://github.com/morishxt/windctrl/pull/4
