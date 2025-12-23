@@ -1,3 +1,7 @@
+## v0.2.1
+
+- Improve types related `slots` https://github.com/morishxt/windctrl/pull/8
+
 ## v0.2.0
 
 - Preset functions for `dynamic` https://github.com/morishxt/windctrl/pull/6
