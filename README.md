@@ -4,14 +4,15 @@
 
 **WindCtrl** is a next-generation styling utility that unifies static Tailwind classes and dynamic inline styles into a single, type-safe interface.
 
-It evolves the concept of Variant APIs (like [cva](https://cva.style/)) by introducing **Stackable Traits** to solve combinatorial explosion and **Interpolated Variants** for seamless dynamic value handling—all while maintaining a minimal runtime footprint optimized for Tailwind's JIT compiler.
+It builds on existing variant APIs (like [cva](https://cva.style/)) and introduces **Stackable Traits** to avoid combinatorial explosion, as well as **Interpolated Variants** for seamless dynamic styling.
+All of this is achieved with a minimal runtime footprint and full compatibility with Tailwind's JIT compiler.
 
 ## Features
 
-- 🎨 **Unified API** - Seamlessly blends static Tailwind classes and dynamic inline styles into one cohesive interface.
 - 🧩 **Trait System** - Solves combinatorial explosion by treating states as stackable, non-exclusive layers.
-- 🎯 **Scoped Styling** - Context-aware styling using data attributes - no React Context required (RSC friendly).
+- 🎨 **Unified API** - Seamlessly blends static Tailwind classes and dynamic inline styles into one cohesive interface.
 - ⚡ **JIT Conscious** - Designed for Tailwind JIT: utilities stay as class strings, while truly dynamic values can be expressed as inline styles.
+- 🎯 **Scoped Styling** - Context-aware styling using data attributes - no React Context required (RSC friendly).
 - 🔒 **Type-Safe** - Best-in-class TypeScript support with automatic prop inference.
 - 📦 **Minimal Overhead** - Ultra-lightweight runtime with only `clsx` and `tailwind-merge` as dependencies.
 
@@ -68,6 +69,109 @@ button({ w: "w-full" });
 ```
 
 ## Core Concepts
+
+### Variants
+
+Variants represent mutually exclusive design choices (e.g., `primary` vs `secondary`). They serve as the foundation of your component's design system.
+
+```typescript
+const button = windctrl({
+  variants: {
+    intent: {
+      primary: "bg-blue-500 text-white hover:bg-blue-600",
+      secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+    },
+    size: {
+      sm: "text-sm h-8 px-3",
+      md: "text-base h-10 px-4",
+      lg: "text-lg h-12 px-6",
+    },
+  },
+  defaultVariants: {
+    intent: "primary",
+    size: "md",
+  },
+});
+
+// Usage
+button({ intent: "primary", size: "lg" });
+```
+
+### Traits (Stackable States)
+
+Traits are non-exclusive, stackable layers of state. Unlike `variants` (which are mutually exclusive), multiple traits can be active simultaneously. This declarative approach solves the "combinatorial explosion" problem often seen with `compoundVariants`.
+
+Traits are **non-exclusive, stackable modifiers**. Unlike variants (mutually exclusive design choices), multiple traits can be active at the same time. This is a practical way to model boolean-like component states (e.g. `loading`, `disabled`, `glass`) without exploding compoundVariants.
+
+When multiple traits generate conflicting utilities, Tailwind’s “last one wins” rule applies (via `tailwind-merge`).
+If ordering matters, prefer the **array form** to make precedence explicit.
+
+```typescript
+const button = windctrl({
+  traits: {
+    loading: "opacity-50 cursor-wait",
+    glass: "backdrop-blur-md bg-white/10 border border-white/20",
+    disabled: "pointer-events-none grayscale",
+  },
+});
+
+// Usage - Array form (explicit precedence; recommended when conflicts are possible)
+button({ traits: ["loading", "glass"] });
+
+// Usage - Object form (convenient for boolean props; order is not intended to be meaningful)
+button({ traits: { loading: isLoading, glass: true } });
+```
+
+### Slots (Compound Components)
+
+Slots allow you to define styles for **sub-elements** (e.g., icon, label) within a single component definition. Each slot returns its own class string, enabling clean compound component patterns.
+
+Slots are completely optional and additive. You can start with a single-root component and introduce slots only when needed.
+If a slot is never defined, it simply won't appear in the result.
+
+```typescript
+const button = windctrl({
+  base: {
+    root: "inline-flex items-center gap-2 rounded px-4 py-2",
+    slots: {
+      icon: "shrink-0",
+      label: "truncate",
+    },
+  },
+  variants: {
+    size: {
+      sm: {
+        root: "h-8 text-sm",
+        slots: { icon: "h-3 w-3" },
+      },
+      md: {
+        root: "h-10 text-base",
+        slots: { icon: "h-4 w-4" },
+      },
+    },
+  },
+  traits: {
+    loading: {
+      root: "opacity-70 pointer-events-none",
+      slots: { icon: "animate-spin" },
+    },
+  },
+  defaultVariants: { size: "md" },
+});
+
+// Usage
+const { className, slots } = button({ size: "sm", traits: ["loading"] });
+
+// Apply to elements
+<button className={className}>
+  <Icon className={slots?.icon} />
+  <span className={slots?.label}>Click me</span>
+</button>
+```
+
+Slots follow the same priority rules as root classes: **Base < Variants < Traits**, with `tailwind-merge` handling conflicts.
+
+Unlike slot-based APIs that require declaring all slots upfront, WindCtrl allows slots to emerge naturally from variants and traits.
 
 ### Interpolated Variants (Dynamic Props)
 
@@ -131,31 +235,6 @@ button({ w: 200 }); // -> style includes { width: "200px" } (dynamic value)
 
 > **Note on Tailwind JIT**: Tailwind only generates CSS for class names it can statically detect in your source. Avoid constructing class strings dynamically (e.g. "`w-`" + `size`) unless you safelist them in your Tailwind config.
 
-### Traits (Stackable States)
-
-Traits are non-exclusive, stackable layers of state. Unlike `variants` (which are mutually exclusive), multiple traits can be active simultaneously. This declarative approach solves the "combinatorial explosion" problem often seen with `compoundVariants`.
-
-Traits are **non-exclusive, stackable modifiers**. Unlike variants (mutually exclusive design choices), multiple traits can be active at the same time. This is a practical way to model boolean-like component states (e.g. `loading`, `disabled`, `glass`) without exploding compoundVariants.
-
-When multiple traits generate conflicting utilities, Tailwind’s “last one wins” rule applies (via `tailwind-merge`).
-If ordering matters, prefer the **array form** to make precedence explicit.
-
-```typescript
-const button = windctrl({
-  traits: {
-    loading: "opacity-50 cursor-wait",
-    glass: "backdrop-blur-md bg-white/10 border border-white/20",
-    disabled: "pointer-events-none grayscale",
-  },
-});
-
-// Usage - Array form (explicit precedence; recommended when conflicts are possible)
-button({ traits: ["loading", "glass"] });
-
-// Usage - Object form (convenient for boolean props; order is not intended to be meaningful)
-button({ traits: { loading: isLoading, glass: true } });
-```
-
 ### Scopes (RSC Support)
 
 Scopes enable **context-aware styling** without relying on React Context or client-side JavaScript. This makes them fully compatible with React Server Components (RSC). They utilize Tailwind's group modifier logic under the hood.
@@ -177,33 +256,6 @@ const button = windctrl({
 ```
 
 The scope classes are automatically prefixed with `group-data-[windctrl-scope=...]/windctrl-scope:` to target the parent's data attribute.
-
-### Variants
-
-Variants represent mutually exclusive design choices (e.g., `primary` vs `secondary`). They serve as the foundation of your component's design system.
-
-```typescript
-const button = windctrl({
-  variants: {
-    intent: {
-      primary: "bg-blue-500 text-white hover:bg-blue-600",
-      secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
-    },
-    size: {
-      sm: "text-sm h-8 px-3",
-      md: "text-base h-10 px-4",
-      lg: "text-lg h-12 px-6",
-    },
-  },
-  defaultVariants: {
-    intent: "primary",
-    size: "md",
-  },
-});
-
-// Usage
-button({ intent: "primary", size: "lg" });
-```
 
 ## Gotchas
 
