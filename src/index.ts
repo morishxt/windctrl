@@ -160,7 +160,7 @@ function isSlotAwareValue(value: unknown): value is SlotAwareObject {
 }
 
 function addSlotClasses(
-  slotParts: Record<string, ClassValue[]>,
+  slotParts: Record<string, ClassValue[] | undefined>,
   slots: Record<string, ClassValue>,
 ): void {
   for (const [slotName, slotClasses] of Object.entries(slots)) {
@@ -174,7 +174,7 @@ function addSlotClasses(
 function processTraits<TTraits extends Record<string, SlotAwareValue>>(
   traits: TTraits,
   propsTraits?: Props<{}, TTraits>["traits"],
-  slotParts?: Record<string, ClassValue[]>,
+  slotParts?: Record<string, ClassValue[] | undefined>,
 ): ClassValue[] {
   if (!propsTraits) return [];
 
@@ -268,6 +268,8 @@ export function windctrl<
 ): (
   props?: Props<TVariants, TTraits, TDynamic>,
 ) => Result<SlotKeys<typeof config.base, TVariants, TTraits>> {
+  type TSlotKeys = SlotKeys<typeof config.base, TVariants, TTraits>;
+
   const {
     base,
     variants = {} as TVariants,
@@ -290,7 +292,7 @@ export function windctrl<
   return (props = {} as Props<TVariants, TTraits, TDynamic>) => {
     const classNameParts: ClassValue[] = [];
     let mergedStyle: CSSProperties = {};
-    const slotParts: Record<string, ClassValue[]> = {};
+    const slotParts: Partial<Record<TSlotKeys, ClassValue[]>> = {};
 
     // Priority order: Base < Variants < Traits < Dynamic
     // (Higher priority classes are added later, so tailwind-merge will keep them)
@@ -353,18 +355,24 @@ export function windctrl<
 
     const hasStyle = Object.keys(mergedStyle).length > 0;
 
-    let finalSlots: Record<string, string> | undefined;
-    const slotNames = Object.keys(slotParts);
+    let finalSlots: Partial<Record<TSlotKeys, string>> | undefined;
+
+    const slotNames = Object.keys(slotParts) as TSlotKeys[];
     if (slotNames.length > 0) {
-      finalSlots = {};
+      const out: Partial<Record<TSlotKeys, string>> = {};
+
       for (const slotName of slotNames) {
-        const merged = twMerge(clsx(slotParts[slotName]));
+        const parts = slotParts[slotName];
+        if (!parts) continue;
+
+        const merged = twMerge(clsx(parts));
         if (merged) {
-          finalSlots[slotName] = merged;
+          out[slotName] = merged;
         }
       }
-      if (Object.keys(finalSlots).length === 0) {
-        finalSlots = undefined;
+
+      if (Object.keys(out).length > 0) {
+        finalSlots = out;
       }
     }
 
@@ -372,7 +380,7 @@ export function windctrl<
       className: finalClassName,
       ...(hasStyle && { style: mergedStyle }),
       ...(finalSlots && { slots: finalSlots }),
-    } as Result<SlotKeys<typeof config.base, TVariants, TTraits>>;
+    };
   };
 }
 
