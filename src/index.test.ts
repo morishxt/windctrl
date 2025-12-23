@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { windctrl, wc } from "./";
+import { windctrl, wc, dynamic as d } from "./";
 
 describe("wc", () => {
   it("should be the same as windctrl", () => {
@@ -318,6 +318,144 @@ describe("windctrl", () => {
       const result = box({ w1: true as any, w2: true as any });
 
       expect(result.style).toEqual({ width: "200px" });
+    });
+  });
+
+  describe("Dynamic presets", () => {
+    describe("d.px()", () => {
+      it("should output inline style for number (px) and keep className empty", () => {
+        const box = windctrl({
+          dynamic: {
+            w: d.px("width"),
+          },
+        });
+
+        const result = box({ w: 123 });
+        expect(result.style).toEqual({ width: "123px" });
+        expect(result.className).toBe("");
+      });
+
+      it("should pass through className string for string input (Unified API)", () => {
+        const box = windctrl({
+          dynamic: {
+            w: d.px("width"),
+          },
+        });
+
+        const result = box({ w: "w-full" });
+        expect(result.className).toContain("w-full");
+        expect(result.style).toEqual(undefined);
+      });
+    });
+
+    describe("d.num()", () => {
+      it("should output inline style for number (unitless) and keep className empty", () => {
+        const layer = windctrl({
+          dynamic: {
+            z: d.num("zIndex"),
+          },
+        });
+
+        const result = layer({ z: 999 });
+        expect(result.style).toEqual({ zIndex: 999 });
+        expect(result.className).toBe("");
+      });
+
+      it("should pass through className string for string input (Unified API)", () => {
+        const layer = windctrl({
+          dynamic: {
+            z: d.num("zIndex"),
+          },
+        });
+
+        const result = layer({ z: "z-50" });
+        expect(result.className).toContain("z-50");
+        expect(result.style).toEqual(undefined);
+      });
+    });
+
+    describe("d.opacity()", () => {
+      it("should output inline style for number and keep className empty", () => {
+        const fade = windctrl({
+          dynamic: {
+            opacity: d.opacity(),
+          },
+        });
+
+        const result = fade({ opacity: 0.4 });
+        expect(result.style).toEqual({ opacity: 0.4 });
+        expect(result.className).toBe("");
+      });
+
+      it("should pass through className string for string input (Unified API)", () => {
+        const fade = windctrl({
+          dynamic: {
+            opacity: d.opacity(),
+          },
+        });
+
+        const result = fade({ opacity: "opacity-50" });
+        expect(result.className).toContain("opacity-50");
+        expect(result.style).toEqual(undefined);
+      });
+    });
+
+    describe("d.var()", () => {
+      it("should set CSS variable as inline style for number with unit (no className output)", () => {
+        const card = windctrl({
+          dynamic: {
+            x: d.var("--x", { unit: "px" }),
+          },
+        });
+
+        const result = card({ x: 12 });
+
+        // NOTE: CSS custom properties are stored as object keys.
+        expect(result.style).toEqual({ "--x": "12px" });
+        expect(result.className).toBe("");
+      });
+
+      it("should set CSS variable as inline style for string value (no className output)", () => {
+        const card = windctrl({
+          dynamic: {
+            x: d.var("--x"),
+          },
+        });
+
+        const result = card({ x: "10%" });
+        expect(result.style).toEqual({ "--x": "10%" });
+        expect(result.className).toBe("");
+      });
+
+      it("should merge multiple CSS variables via last-one-wins when same variable is set twice", () => {
+        const card = windctrl({
+          dynamic: {
+            x1: d.var("--x", { unit: "px" }),
+            x2: d.var("--x", { unit: "px" }),
+          },
+        });
+
+        const result = card({ x1: 10, x2: 20 });
+
+        // last one wins
+        expect(result.style).toEqual({ "--x": "20px" });
+      });
+    });
+
+    it("should coexist with other dynamic resolvers (className + style merge)", () => {
+      const box = windctrl({
+        dynamic: {
+          w: d.px("width"),
+          opacity: d.opacity(),
+          // keep an existing custom resolver in the same config
+          custom: (v) => (v ? "ring-2" : ""),
+        },
+      });
+
+      const result = box({ w: 100, opacity: 0.5, custom: true });
+
+      expect(result.style).toEqual({ width: "100px", opacity: 0.5 });
+      expect(result.className).toContain("ring-2");
     });
   });
 

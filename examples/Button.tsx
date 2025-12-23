@@ -1,5 +1,5 @@
 import React from "react";
-import { windctrl } from "../src/index";
+import { windctrl, dynamic as d } from "../src/index";
 import type { ComponentPropsWithoutRef, ElementType } from "react";
 
 const button = windctrl({
@@ -24,10 +24,8 @@ const button = windctrl({
     disabled: "pointer-events-none opacity-50",
   },
   dynamic: {
-    w: (val) =>
-      typeof val === "number" ? { style: { width: `${val}px` } } : `w-${val}`,
-    h: (val) =>
-      typeof val === "number" ? { style: { height: `${val}px` } } : `h-${val}`,
+    w: d.px("width"),
+    h: d.px("height"),
   },
   defaultVariants: {
     intent: "primary",

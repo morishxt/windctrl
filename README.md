@@ -24,7 +24,7 @@ npm install windctrl
 ## Quick Start
 
 ```typescript
-import { windctrl } from "windctrl";
+import { windctrl, dynamic as d } from "windctrl";
 
 const button = windctrl({
   base: "rounded px-4 py-2 font-medium transition duration-200",
@@ -44,8 +44,7 @@ const button = windctrl({
     glass: "backdrop-blur-md bg-white/10 border border-white/20 shadow-xl",
   },
   dynamic: {
-    w: (val) =>
-      typeof val === "number" ? { style: { width: `${val}px` } } : val,
+    w: d.px("width"),
   },
   defaultVariants: {
     intent: "primary",
@@ -80,12 +79,46 @@ Interpolated variants provide a **Unified API** that bridges static Tailwind cla
 This is **JIT-friendly by design**, as long as the class strings you return are statically enumerable (i.e. appear in your source code).
 For truly unbounded values (e.g. pixel sizes), prefer returning style to avoid relying on arbitrary-value class generation.
 
+#### Dynamic Presets
+
+WindCtrl provides built-in presets for common dynamic patterns:
+
+```typescript
+import { windctrl, dynamic as d } from "windctrl";
+
+const box = windctrl({
+  dynamic: {
+    // d.px() - pixel values (width, height, top, left, etc.)
+    w: d.px("width"),
+    h: d.px("height"),
+
+    // d.num() - unitless numbers (zIndex, flexGrow, order, etc.)
+    z: d.num("zIndex"),
+
+    // d.opacity() - opacity values
+    fade: d.opacity(),
+
+    // d.var() - CSS custom properties
+    x: d.var("--translate-x", { unit: "px" }),
+  },
+});
+
+// Usage
+box({ w: 200 }); // -> style: { width: "200px" }
+box({ w: "w-full" }); // -> className: "w-full"
+box({ z: 50 }); // -> style: { zIndex: 50 }
+box({ fade: 0.5 }); // -> style: { opacity: 0.5 }
+box({ x: 10 }); // -> style: { "--translate-x": "10px" }
+```
+
+#### Custom Resolvers
+
+You can also write custom resolvers for more complex logic:
+
 ```typescript
 const button = windctrl({
   dynamic: {
-    // Recommended pattern:
-    // - Numbers -> inline styles (unbounded values)
-    // - Strings -> Tailwind utilities (must be statically enumerable for JIT)
+    // Custom resolver example
     w: (val) =>
       typeof val === "number" ? { style: { width: `${val}px` } } : val,
   },
