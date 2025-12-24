@@ -281,6 +281,37 @@ const button = windctrl({
 
 The scope classes are automatically prefixed with `group-data-[windctrl-scope=...]/windctrl-scope:` to target the parent's data attribute.
 
+## Type Helpers (`StyleProps`)
+
+When building reusable components, you often want to expose the exact style-related props inferred from a `windctrl()` definition.
+
+WindCtrl exports a small type helper for this purpose:
+
+```typescript
+import type { StyleProps } from "windctrl";
+```
+
+`StyleProps<typeof styles>` extracts all variant, trait, and dynamic props from a WindCtrl instance — similar to `VariantProps` in cva.
+
+```typescript
+const button = windctrl({ ... });
+
+type ButtonProps<T extends ElementType = "button"> = {
+  as?: T;
+} & Omit<ComponentPropsWithoutRef<T>, keyof StyleProps<typeof button>>
+  & StyleProps<typeof button>;
+```
+
+This lets you:
+
+- Avoid manually duplicating variant/trait prop definitions
+- Keep component props automatically in sync with styling config
+- Refactor styles without touching component typings
+
+> `StyleProps` is optional - you can always define props manually if you prefer.
+
+> `wcProps` is provided as an alias of `StyleProps` for convenience.
+
 ## Gotchas
 
 - **Tailwind JIT:** Tailwind only generates CSS for class names it can statically detect. Avoid constructing class strings dynamically unless you safelist them.
