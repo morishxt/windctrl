@@ -1,6 +1,7 @@
 {
   "name": "windctrl",
   "version": "0.2.2",
+  "packageManager": "pnpm@10.x",
   "description": "Advanced variant API for Tailwind CSS with stackable traits and interpolated dynamic styles.",
   "license": "MIT",
   "author": "Masaki Morishita (@morishxt)",
@@ -46,7 +47,7 @@
     "dev": "tsc --watch",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "pnpm run build && pnpm test"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
