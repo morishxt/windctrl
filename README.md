@@ -68,30 +68,6 @@ button({ w: 350 });
 button({ w: "w-full" });
 ```
 
-## Merging External `className` Safely (wcn)
-
-WindCtrl resolves Tailwind class conflicts **inside** `windctrl()` using `tailwind-merge`.
-However, in real applications you often need to merge **additional `className` values** at the component boundary.
-
-A simple string concat can reintroduce conflicts:
-
-```tsx
-// ⚠️ Can cause subtle Tailwind conflicts (e.g. p-2 vs p-4)
-className={`${result.className} ${className}`}
-```
-
-WindCtrl exports a small helper for this use case:
-
-```tsx
-import { wcn } from "windctrl";
-
-// ✅ Conflict-safe merge
-className={wcn(result.className, className)}
-```
-
-`wcn()` is equivalent to `twMerge(clsx(...))` and matches WindCtrl’s internal conflict resolution behavior.
-This keeps the “last one wins” behavior consistent across both generated and user-supplied classes.
-
 ## Core Concepts
 
 ### Variants
@@ -280,6 +256,30 @@ const button = windctrl({
 ```
 
 The scope classes are automatically prefixed with `group-data-[windctrl-scope=...]/windctrl-scope:` to target the parent's data attribute.
+
+## Merging External `className` Safely (`wcn()`)
+
+WindCtrl resolves Tailwind class conflicts **inside** `windctrl()` using `tailwind-merge`.
+However, in real applications you often need to merge **additional `className` values** at the component boundary.
+
+A simple string concat can reintroduce conflicts:
+
+```tsx
+// ⚠️ Can cause subtle Tailwind conflicts (e.g. p-2 vs p-4)
+className={`${result.className} ${className}`}
+```
+
+WindCtrl exports a small helper for this use case:
+
+```tsx
+import { wcn } from "windctrl";
+
+// ✅ Conflict-safe merge
+className={wcn(result.className, className)}
+```
+
+`wcn()` is equivalent to `twMerge(clsx(...))` and matches WindCtrl’s internal conflict resolution behavior.
+This keeps the “last one wins” behavior consistent across both generated and user-supplied classes.
 
 ## Type Helpers (`StyleProps`)
 
