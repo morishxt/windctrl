@@ -1,9 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { windctrl, wc, dynamic as d } from "./";
+import { windctrl, wc, dynamic as d, wcn } from "./";
 
 describe("wc", () => {
   it("should be the same as windctrl", () => {
     expect(wc).toBe(windctrl);
+  });
+});
+
+describe("wcn", () => {
+  it("should merge class names with clsx behavior", () => {
+    expect(wcn("a", false && "b", null as any, undefined, "c")).toBe("a c");
+  });
+
+  it("should resolve Tailwind conflicts using tailwind-merge (last one wins)", () => {
+    expect(wcn("p-2", "p-4")).toBe("p-4");
+  });
+
+  it("should handle arrays and objects like clsx", () => {
+    expect(wcn(["a", ["b"]], { c: true, d: false })).toBe("a b c");
   });
 });
 

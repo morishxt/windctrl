@@ -385,3 +385,7 @@ export function windctrl<
 }
 
 export const wc = windctrl;
+
+export function wcn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
