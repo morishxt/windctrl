@@ -389,3 +389,7 @@ export const wc = windctrl;
 export function wcn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// Extract the props type from a windctrl instance
+export type StyleProps<T> = T extends (props?: infer P) => any ? P : never;
+export type wcProps<T> = StyleProps<T>;

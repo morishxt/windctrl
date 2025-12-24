@@ -1,5 +1,5 @@
 import React from "react";
-import { windctrl, dynamic as d, wcn } from "../src/index";
+import { windctrl, dynamic as d, wcn, type StyleProps } from "../src/index";
 import type { ComponentPropsWithoutRef, ElementType } from "react";
 
 const button = windctrl({
@@ -39,14 +39,8 @@ const button = windctrl({
 
 type ButtonProps<T extends ElementType = "button"> = {
   as?: T;
-  intent?: "primary" | "secondary" | "destructive" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
-  traits?:
-    | Array<"loading" | "glass" | "disabled">
-    | { loading?: boolean; glass?: boolean; disabled?: boolean };
-  w?: string | number;
-  h?: string | number;
-} & ComponentPropsWithoutRef<T>;
+} & Omit<ComponentPropsWithoutRef<T>, keyof StyleProps<typeof button>> &
+  StyleProps<typeof button>;
 
 export function Button<T extends ElementType = "button">({
   as,
