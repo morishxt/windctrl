@@ -1,3 +1,9 @@
+## v0.2.2
+
+- Introduce `wcn()` https://github.com/morishxt/windctrl/pull/10
+- Extract the props type from a windctrl instance https://github.com/morishxt/windctrl/pull/9
+- Refactoring https://github.com/morishxt/windctrl/pull/12
+
 ## v0.2.1
 
 - Improve types related `slots` https://github.com/morishxt/windctrl/pull/8
