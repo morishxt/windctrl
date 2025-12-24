@@ -1,5 +1,5 @@
 import React from "react";
-import { windctrl, dynamic as d } from "../src/index";
+import { windctrl, dynamic as d, wcn } from "../src/index";
 import type { ComponentPropsWithoutRef, ElementType } from "react";
 
 const button = windctrl({
@@ -71,7 +71,7 @@ export function Button<T extends ElementType = "button">({
 
   return (
     <Component
-      className={`${buttonClassName} ${className || ""}`}
+      className={wcn(buttonClassName, className)}
       style={{ ...buttonStyle, ...style }}
       {...props}
     >
